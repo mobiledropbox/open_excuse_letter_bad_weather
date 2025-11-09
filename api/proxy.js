@@ -1,9 +1,27 @@
 export default async function handler(req, res) {
   try {
-    // Hardcoded target since only one site is proxied
-    const targetUrl = "https://noah.up.edu.ph/noah-studio";
+    // 🧭 Use the full subdirectory path — very important!
+    const targetUrl = "https://noah.up.edu.ph/noah-studio/";
     const target = new URL(targetUrl);
 
+    // If a ?url= param exists, proxy that directly
+    if (req.query.url) {
+      const realUrl = decodeURIComponent(req.query.url);
+      const assetRes = await fetch(realUrl, {
+        headers: { "User-Agent": req.headers["user-agent"] || "vercel-proxy" },
+        redirect: "follow",
+      });
+
+      const buffer = Buffer.from(await assetRes.arrayBuffer());
+      const ct = assetRes.headers.get("content-type");
+      if (ct) res.setHeader("content-type", ct);
+      const cc = assetRes.headers.get("cache-control");
+      if (cc) res.setHeader("cache-control", cc);
+      res.status(assetRes.status).send(buffer);
+      return;
+    }
+
+    // Otherwise, fetch the main HTML page
     const fetchRes = await fetch(target.href, {
       headers: { "User-Agent": req.headers["user-agent"] || "vercel-proxy" },
       redirect: "follow",
@@ -11,41 +29,29 @@ export default async function handler(req, res) {
 
     const contentType = fetchRes.headers.get("content-type") || "";
 
-    // HTML content
     if (contentType.includes("text/html")) {
       let text = await fetchRes.text();
 
-      // Inject base + viewport
-      const baseTag = `<base href="${target.origin}">`;
+      // 🧩 Inject <base> and viewport
+      const baseTag = `<base href="${target.href}">`;
       const injectedHead = `
         ${baseTag}
         <meta name="viewport" content="width=device-width,initial-scale=1">
       `;
       text = text.replace(/<head(\s|>)/i, (m) => `${m}${injectedHead}`);
 
-      // 🧠 UNIVERSAL LINK REWRITER (handles /, ./, and relative paths)
+      // 🧠 Smarter link rewriter: handles relative + subdirectory paths
       text = text.replace(
         /(src|href)=["'](?!https?:\/\/)([^"'>]+)["']/gi,
         (m, attr, path) => {
-          // Skip anchors and data URIs
           if (path.startsWith("#") || path.startsWith("data:")) return m;
 
-          let absolute;
-          if (path.startsWith("/")) {
-            absolute = target.origin + path;
-          } else if (path.startsWith("./")) {
-            absolute = target.origin + path.slice(1);
-          } else {
-            // relative to current document path
-            const base = target.href.replace(/\/[^/]*$/, "/");
-            absolute = base + path;
-          }
-
-          return `${attr}="/api/proxy?url=${encodeURIComponent(absolute)}"`;
+          const fullUrl = new URL(path, target.href).href;
+          return `${attr}="/api/proxy?url=${encodeURIComponent(fullUrl)}"`;
         }
       );
 
-      // 🔁 Rewrite fully-qualified URLs from same host to pass through proxy
+      // 🔁 Rewrite fully qualified URLs from same host
       const hostPattern = new RegExp(
         `(src|href)=["'](${target.origin.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")}[^"']*)["']`,
         "gi"
@@ -56,18 +62,16 @@ export default async function handler(req, res) {
           `${attr}="/api/proxy?url=${encodeURIComponent(full)}"`
       );
 
-      // 🖼 Handle srcset for responsive images
+      // 🖼 Handle srcset
       text = text.replace(/srcset=["']([^"']*)["']/gi, (m, s) => {
         const replaced = s.replace(/(https?:\/\/[^,\s]+|\/[^,\s]+)/g, (urlItem) => {
-          const absolute = urlItem.startsWith("/")
-            ? target.origin + urlItem
-            : urlItem;
+          const absolute = new URL(urlItem, target.href).href;
           return `/api/proxy?url=${encodeURIComponent(absolute)}`;
         });
         return `srcset="${replaced}"`;
       });
 
-      // 📏 Inject dynamic resizing script for iframe scaling
+      // 📏 Inject iframe resize script
       const sizeScript = `
         <script>
           (function(){
@@ -99,7 +103,7 @@ export default async function handler(req, res) {
         ? text.replace("</body>", sizeScript + "</body>")
         : text + sizeScript;
 
-      // 🚫 Strip security meta tags that block embedding
+      // 🚫 Remove blocking meta tags
       text = text.replace(
         /<meta[^>]*http-equiv=["']content-security-policy["'][^>]*>/gi,
         ""
@@ -109,13 +113,13 @@ export default async function handler(req, res) {
         ""
       );
 
-      // ✅ Send back rewritten HTML
+      // ✅ Send HTML back
       res.setHeader("content-type", "text/html; charset=utf-8");
       res.send(text);
       return;
     }
 
-    // 🧱 Handle static assets (CSS, JS, fonts, etc.)
+    // 🧱 Fallback for non-HTML
     const buffer = Buffer.from(await fetchRes.arrayBuffer());
     const ct = fetchRes.headers.get("content-type");
     if (ct) res.setHeader("content-type", ct);
