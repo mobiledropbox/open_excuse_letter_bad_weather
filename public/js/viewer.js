@@ -19,7 +19,7 @@ function playAnimation() {
   setInterval(() => {
     viewer.src = images[index];
     const name = images[index].split("_").pop().replace(".jpg", "");
-    timestamp.textContent = `Frame time: ${name.slice(0, 2)}:${name.slice(2)} UTC`;
+    timestamp.textContent = `UTC aka 🇬🇧London time: ${name.slice(0, 2)}:${name.slice(2)}`;
     index = (index + 1) % images.length;
   }, 1000); // 1s per frame
 }
