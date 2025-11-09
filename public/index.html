@@ -9,6 +9,7 @@
 <body>
   <main class="main-container">
     <div class="card" id="himari-viewer">
+      <button id="view-excuse-btn" class="excuse-btn">View Excuse Letter</button>
       <h1>Himawari Satellite - Southeast Asia 2</h1>
       <small><strong>Real-time feed of 30 still images from Himawari-8 B13 continuously processed on serverless Node.js and delivered through Vercel CDN.</strong></small>
       <div id="viewer-container">
@@ -44,7 +45,9 @@
     </div>
   </footer>
   
-  <script src="/js/viewer.js"></script>
+<script src="/js/viewer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="/js/markdown.js"></script>
 </body>
 </html>
 
