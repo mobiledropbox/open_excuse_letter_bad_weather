@@ -1,43 +1,173 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
 body {
+  font-family: 'Poppins', sans-serif;
   margin: 0;
-  font-family: "Segoe UI", sans-serif;
-  background: #0b0b0b;
-  color: #eaeaea;
+  background: radial-gradient(circle at top left, #141e30, #243b55);
+  color: #fff;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .main-container {
+  flex: 1;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  padding: 2rem;
 }
 
 .card {
-  background: #1c1c1c;
-  padding: 1.5rem;
-  border-radius: 1rem;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  backdrop-filter: blur(15px);
   text-align: center;
+  padding: 2rem;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+  max-width: 500px;
+  width: 100%;
+  transition: transform 0.3s ease;
 }
 
-#viewer-container {
-  margin-top: 1rem;
-  background: #000;
-  border-radius: 0.5rem;
-  overflow: hidden;
+.card:hover {
+  transform: scale(1.03);
 }
 
-#himawari-img {
-  max-width: 100%;
-  border-radius: 0.5rem;
+.repo-message {
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
 }
 
-#timestamp {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  color: #aaa;
+.repo-message a {
+  color: #8be9fd;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.repo-message a:hover {
+  text-decoration: underline;
+}
+
+.download-btn {
+  background: linear-gradient(45deg, #ff6ec4, #7873f5);
+  border: none;
+  color: white;
+  font-weight: 600;
+  border-radius: 50px;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.download-btn:hover {
+  transform: scale(1.05);
+  background: linear-gradient(45deg, #ff8fd8, #9b89ff);
+}
+
+/* FOOTER */
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-left,
+.footer-center,
+.footer-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-left {
+  gap: 0.8rem;
+}
+
+.footer-left img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid #8be9fd;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.footer-left img:hover {
+  transform: scale(1.1);
+}
+
+.footer-left p {
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.footer-left a.footer-name {
+  color: #8be9fd;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.footer-center small {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.8);
+}
+
+.footer-center a {
+  color: #8be9fd;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.footer-right {
+  gap: 0.5rem;
+}
+
+.fb-link {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+}
+
+.fb-img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #1877f2;
+  object-fit: cover;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.fb-img:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px #1877f2;
+}
+
+.fb-link span {
+  font-weight: 500;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  footer {
+    flex-direction: column;
+    text-align: center;
+  }
+  .card {
+    max-width: 90%;
+    padding: 1.5rem;
+  }
+  .repo-message {
+    font-size: 0.9rem;
+  }
+  .download-btn {
+    width: 100%;
+  }
 }
 
