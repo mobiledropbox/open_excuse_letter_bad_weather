@@ -1,4 +1,4 @@
-// Ron Penones | November 10th 2025 - Feel free to share and reproduce, the core idea is mine with some assistance of AI. Padayon!
+// Ron Penones | November 13th 2025 - Feel free to share and reproduce, the core idea is mine with some assistance of AI. Padayon!
 // Etong script na ito subtly kalokohan lang pero may impact lalo na pag ang amo mo tanga.
 // Markdown viewer for excuse letter kasi nga diba bad weather excuse letter yan.
 // Ang purpose nito eh maglapat siya ng button na pag-click mo eh may lalabas na excuse letter in markdown format sa pop-up dialog.
