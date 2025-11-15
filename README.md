@@ -9,9 +9,11 @@ aeronje
     │   └── himawari.js
     └── public/
         ├── index.html
+        ├── disclaimer.md
         ├── excuse_letter.md
         └── js/
             ├── viewer.js
+            ├── disclaimer.js
             └── markdown.js
 ```
 # [Tech content](https://web.facebook.com/share/v/17P5FzcMR5/)
